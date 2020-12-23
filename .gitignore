@@ -1,3 +1,10 @@
 ##ignore this file##
-.vs
+MSVisualStudio/V10_VS2010/Sample/.vs
+MSVisualStudio/V10_VS2010/Sample/x64
+MSVisualStudio/V10_VS2010/Sample/Debug
+MSVisualStudio/V10_VS2010/Sample/Release
+
+MSVisualStudio/V16_VS2019/Sample/.vs
 MSVisualStudio/V16_VS2019/Sample/x64
+MSVisualStudio/V16_VS2019/Sample/Debug
+MSVisualStudio/V16_VS2019/Sample/Release
