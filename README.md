@@ -7,7 +7,7 @@ SCUC is written in C++ and is released as open source under the [Eclipse Public 
 * [CBC](https://github.com/coin-or/Cbc) a general mixed integer programming solver 
 * [Clp](https://github.com/coin-or/Clp) the default solver for LP relaxations 
 * [Cgl](https://github.com/coin-or/Cgl) for cut generation
-* [CoinUtils](https://github.com/coin-or/CoinUtils) for reading input files and various utilitiesBranching
+* [CoinUtils](https://github.com/coin-or/CoinUtils) for reading input files and various utilities Branching
 
 ## Usage
    ### Binaries
