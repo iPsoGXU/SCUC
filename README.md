@@ -1,5 +1,5 @@
 # SCUC
-SCUC is a  MIP(Mix Integer Programming) solver for security constrained unit commitment problem. It aims to develop a customized approach that can include  specialized techniques such as dynamic cut and column generation, specialized branching, or heuristics to help find feasible solutions more quickly. Benefit from knowledge about the problem being solved, the solver is expected to solve the large scale day-ahead security constrained unit commitment performance more efficiently than a general MIP solver such as CPLEX, Gurobi.
+SCUC is a  MIP(Mixed Integer Programming) solver for security constrained unit commitment problem. It aims to develop a customized approach that can include  specialized techniques such as dynamic cut and column generation, specialized branching, or heuristics to help find feasible solutions more quickly. Benefit from knowledge about the problem being solved, the solver is expected to solve the large scale day-ahead security constrained unit commitment performance more efficiently than a general MIP solver such as CPLEX, Gurobi.
 
 ## Dependencies 
 * [CBC](https://github.com/coin-or/Cbc) a general mixed integer programming solver 
