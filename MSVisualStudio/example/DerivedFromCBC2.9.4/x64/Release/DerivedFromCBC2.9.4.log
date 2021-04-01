@@ -1,47 +1,9 @@
-﻿  main2.cpp
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppClean.targets(76,5): warning : 文件“d:\课题专用\gitcloneproject\scuc_mas\scuc\msvisualstudio\example\derivedfromcbc2.9.4\x64\release\derivedfromcbc2.9.4.pdb”正由另一进程使用，因此该进程无法访问此文件。
+  main2.cpp
 D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\include\CglZeroHalf.hpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\main2.cpp(777,7): warning C4101: “timing”: 未引用的局部变量
   正在生成代码
-  207 of 210 functions (98.6%) were compiled, the rest were copied from previous compilation.
-    40 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB not found, fall back to full compilation.
+  All 210 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   已完成代码的生成
-libCbc.lib(CbcBranchCut.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcBranchCut.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcBranchDecision.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcBranchDecision.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcBranchDefaultDecision.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcBranchDefaultDecision.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcBranchDynamic.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcBranchDynamic.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcBranchingObject.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcBranchingObject.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcClique.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcClique.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcCompareDefault.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcCompareDefault.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcCompareDepth.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcCompareDepth.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcCountRowCut.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcCountRowCut.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcCutGenerator.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcCutGenerator.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcDummyBranchingObject.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcDummyBranchingObject.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcFollowOn.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcFollowOn.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcFullNodeInfo.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcFullNodeInfo.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcGeneral.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcGeneral.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcGeneralDepth.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcGeneralDepth.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcHeuristic.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcHeuristic.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcHeuristicDive.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcHeuristicDive.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcHeuristicDiveCoefficient.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcHeuristicDiveCoefficient.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcHeuristicFPump.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcHeuristicFPump.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcHeuristicGreedy.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcHeuristicGreedy.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcHeuristicLocal.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcHeuristicLocal.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcHeuristicRINS.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcHeuristicRINS.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcMessage.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcMessage.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcModel.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcModel.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcNode.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcNode.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcNodeInfo.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcNodeInfo.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcObject.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcObject.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcObjectUpdateData.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcObjectUpdateData.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcPartialNodeInfo.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcPartialNodeInfo.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcSimpleInteger.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcSimpleInteger.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcSimpleIntegerDynamicPseudoCost.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcSimpleIntegerDynamicPseudoCost.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcSimpleIntegerPseudoCost.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcSimpleIntegerPseudoCost.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcSOS.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcSOS.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcStatistics.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcStatistics.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcStrategy.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcStrategy.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcSubProblem.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcSubProblem.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcTree.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcTree.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libCbc.lib(CbcTreeLocal.obj) : warning LNK4099: 未找到 PDB“libCbc.pdb”(使用“libCbc.lib(CbcTreeLocal.obj)”或在“D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\libCbc.pdb”中寻找)；正在链接对象，如同没有调试信息一样
   DerivedFromCBC2.9.4.vcxproj -> D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\DerivedFromCBC2.9.4.exe
