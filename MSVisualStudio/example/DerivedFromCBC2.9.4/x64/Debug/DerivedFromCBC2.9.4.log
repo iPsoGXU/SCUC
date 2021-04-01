@@ -1,4 +1,0 @@
-﻿  main2.cpp
-D:\课题专用\VS Project\DerivedFromCBC2.9.4\include\CglZeroHalf.hpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-D:\课题专用\VS Project\DerivedFromCBC2.9.4\main2.cpp(1628,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  DerivedFromCBC2.9.4.vcxproj -> D:\课题专用\VS Project\DerivedFromCBC2.9.4\x64\Debug\DerivedFromCBC2.9.4.exe

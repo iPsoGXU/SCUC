@@ -1,2 +1,0 @@
-D:\课题专用\VS Project\DerivedFromCBC2.9.4\x64\Release\DerivedFromCBC2.9.4.exe
-D:\课题专用\GitCloneProject\SCUC_mas\SCUC\MSVisualStudio\example\DerivedFromCBC2.9.4\x64\Release\DerivedFromCBC2.9.4.exe
