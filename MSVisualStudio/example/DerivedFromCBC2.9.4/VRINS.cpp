@@ -1,3 +1,4 @@
+// This is a variant of RINS which is more appropriate to the problem
 #if defined(_MSC_VER)
 // Turn off compiler warning about long names
 #  pragma warning(disable:4786)
@@ -158,7 +159,7 @@ VRINS::solution(double& solutionValue, double* betterSolution)
 
 	OsiSolverInterface* solver = model_->solver();
 	const double* currentSolution = solver->getColSolution(); // continuous relaxation
-	const int* integerVarIndex = model_->integerVariable();  // integer variable¡®s index
+	const int* integerVarIndex = model_->integerVariable();  // integer variableÂ¡Â®s index
 	const int numberInteger = model_->numberIntegers();   // number of integers
 	OsiSolverInterface* newSolver = model_->continuousSolver()->clone();
 	int numberColumns = newSolver->getNumCols();
