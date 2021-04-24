@@ -39,6 +39,7 @@
 #include "CbcHeuristicGreedy.hpp"
 #include "CbcHeuristicDiveCoefficient.hpp"
 #include "CbcHeuristicRINS.hpp"
+#include "VRINS.h"
 
 #include <cassert>
 #include <cstdio>
@@ -80,7 +81,7 @@ int main()
 	double totalTime = 0.0;
 	OsiClpSolverInterface initialSolver;
 	CbcModel model_(initialSolver);
-	/*******************cbcMain0÷–µƒ“ª–©…Ë÷√**********************/
+	/*******************cbcMain0‰∏≠ÁöÑ‰∏Ä‰∫õËÆæÁΩÆ**********************/
 	{
 		OsiSolverInterface* solver = model_.solver();
 		OsiClpSolverInterface* clpSolver = dynamic_cast<OsiClpSolverInterface*> (solver);
@@ -101,7 +102,7 @@ int main()
 	OsiClpSolverInterface* clpSolver = dynamic_cast<OsiClpSolverInterface*> (solver);
 	ClpSimplex* lpSolver = clpSolver->getModelPtr();
 
-	/**********************∂¡»° ˝æ›**************************/
+	/**********************ËØªÂèñÊï∞ÊçÆ**************************/
 	{
 		std::string fileName = "uc10.mps";
 		ClpSimplex* lpSolver = clpSolver->getModelPtr();
@@ -127,7 +128,7 @@ int main()
 		si->setSpecialOptions(0x40000000);
 	}
 	double start = CoinCpuTime();
-	/***********«ÛΩ‚LPÀ…≥⁄************/
+	/***********Ê±ÇËß£LPÊùæÂºõ************/
 	{
 		double time0 = CoinCpuTime();
 		OsiSolverInterface* solver = model_.solver();
@@ -178,7 +179,7 @@ int main()
 			printf("Continuous objective value is %g - %.2f seconds\n",
 				solver->getObjValue(), CoinCpuTime() - time0);
 		}
-		// …Ë÷√dualBound
+		// ËÆæÁΩÆdualBound
 		if (clpSolver->dualBound() == 1.0e10)
 		{
 			ClpSimplex temp = *clpSolver;
@@ -245,7 +246,7 @@ int main()
 		si->resolve();  // clean up
 	}
 
-	/*************‘§¥¶¿Ì**************/
+	/*************È¢ÑÂ§ÑÁêÜ**************/
 	OsiSolverInterface* saveSolver = NULL;
 	CglPreProcess process;
 	babModel_ = new CbcModel(model_);
@@ -254,7 +255,7 @@ int main()
 	OsiClpSolverInterface* clpSolver2 = dynamic_cast<OsiClpSolverInterface*> (babModel_->solver());
 	lpSolver = clpSolver2->getModelPtr();
 
-	// …Ë÷√“Ú Ω∑÷Ω‚∆µ¬ £¨∂‘«ÛΩ‚ÀŸ∂»”∞œÏΩœ¥Û
+	// ËÆæÁΩÆÂõ†ÂºèÂàÜËß£È¢ëÁéáÔºåÂØπÊ±ÇËß£ÈÄüÂ∫¶ÂΩ±ÂìçËæÉÂ§ß
 	if (lpSolver->factorizationFrequency() == 200)
 	{
 		// User did not touch preset
@@ -276,7 +277,7 @@ int main()
 		lpSolver->setFactorizationFrequency(CoinMin(maximum, frequency));
 	}
 
-	bool preProcess = true;  // ±Í÷æ «∑ÒΩ¯––‘§¥¶¿Ì£¨∂‘”⁄Œ“√«’‚∏ˆÀ„¿˝–Ë“™Ω¯––
+	bool preProcess = true;  // Ê†áÂøóÊòØÂê¶ËøõË°åÈ¢ÑÂ§ÑÁêÜÔºåÂØπ‰∫éÊàë‰ª¨Ëøô‰∏™ÁÆó‰æãÈúÄË¶ÅËøõË°å
 	{
 		// see whether to switch off preprocessing
 		// only allow SOS and integer
@@ -426,7 +427,7 @@ int main()
 				bestSolution[i] = oldBestSolution[jColumn];
 			}
 		}
-		// ‘§¥¶¿Ì∫Û–¬µƒ’˚ ˝
+		// È¢ÑÂ§ÑÁêÜÂêéÊñ∞ÁöÑÊï¥Êï∞
 		{
 			// look at new integers
 			int numberOriginalColumns = process.originalModel()->getNumCols();
@@ -473,7 +474,7 @@ int main()
 		si->resolve();
 	}
 
-	/*****************∆Ù∑¢ Ω********************/
+	/*****************ÂêØÂèëÂºè********************/
 	{
 		// Feasibility Pump 
 		CbcHeuristicFPump heuristicFPump(*babModel_);
@@ -535,15 +536,18 @@ int main()
 		int whenDC = heuristicDC.when(); // 2
 		babModel_->addHeuristic(&heuristicDC);
 		//// RINS
-		CbcHeuristicRINS heuristicRINS(*babModel_);
-		heuristicRINS.setHeuristicName("RINS");
-		heuristicRINS.setFractionSmall(0.5);
-		heuristicRINS.setDecayFactor(5.0);
-		int whereFromRINS = heuristicRINS.whereFrom(); // 65289
-		int whenRINS = heuristicRINS.when(); // 2
+		// CbcHeuristicRINS heuristicRINS(*babModel_);
+		// heuristicRINS.setHeuristicName("RINS");
+		// heuristicRINS.setFractionSmall(0.5);
+		// heuristicRINS.setDecayFactor(5.0);
+		// int whereFromRINS = heuristicRINS.whereFrom(); // 65289
+		// int whenRINS = heuristicRINS.when(); // 2
 		babModel_->addHeuristic(&heuristicRINS);
+		// VRINS
+		VRINS heuristicVRINS(*babModel_);
+		babModel_->addHeuristic(&heuristicVRINS);
 	}
-	/*******************∏Ó∆Ω√Ê*****************/
+	/*******************Ââ≤Âπ≥Èù¢*****************/
 	int switches[30];
 	int accuracyFlag[30];
 	char doAtEnd[30];
@@ -732,7 +736,7 @@ int main()
 
 		babModel_->setAllowablePercentageGap(0.0004);
 
-		// ∑÷÷ß∂®ΩÁ
+		// ÂàÜÊîØÂÆöÁïå
 		babModel_->branchAndBound(0);
 		int truncateColumns = COIN_INT_MAX;
 		int truncateRows = -1;
@@ -765,7 +769,7 @@ int main()
 	}
 	//printf("result is %.2f\n", babModel_->getObjValue());
 	//printf("time is %.2f", CoinCpuTime() - timeStart);
-	/*****************Ω·π˚*******************/
+	/*****************ÁªìÊûú*******************/
 	osiclp = dynamic_cast<OsiClpSolverInterface*> (babModel_->solver());
 	printf("Cuts at root node changed objective from %g to %g\n",
 		babModel_->getContinuousObjective(), babModel_->rootObjectiveAfterCuts());
