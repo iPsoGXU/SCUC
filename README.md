@@ -45,7 +45,7 @@ SCUC is a  MIP(Mix Integer Programming) solver for security constrained unit com
    A Makefile_Linux is in src folder. Users can modify it in terms of the files which will be built.
 
 ## CHANGELOG 
-  ### Add a   heuristic method shift-and-propagate  for UC problem. It is fast and robust. Some details can be found in SCIP solver.
-  ### Add a customized RINS heuristic method  for UC problem.
-  ### Add a more stable and efficient main function to call CBC  in SRC folder.  It is extracted from the CBC call interface which is written by GAMS engineer.
-  ### Change to call CBC 2.9.4 .   We found the some cut generators in CBC will degrade the performance of solving UC problem from the CBC version 2.9.5.
+  * Add a   heuristic method shift-and-propagate  for UC problem. It is fast and robust. Some details can be found in SCIP solver.
+  * Add a customized RINS heuristic method  for UC problem.
+  * Add a more stable and efficient main function to call CBC  in SRC folder.  It is extracted from the CBC call interface which is written by GAMS engineer.
+  * Change to call CBC 2.9.4 .   We found the some cut generators in CBC will degrade the performance of solving UC problem from the CBC version 2.9.5.
