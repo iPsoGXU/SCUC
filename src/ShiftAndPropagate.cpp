@@ -11,32 +11,33 @@
 #include "ShiftAndPropagate.hpp"
 #include "CbcModel.hpp"
 #include "CglPreProcess.hpp"
+#include "OsiClpSolverInterface.hpp"
 
 // Default Constructor
 ShiftAndPropagate::ShiftAndPropagate()
 	:CbcHeuristic()
 {
-
+	maxBacktrackLimit_ = -1;
 }
 
 // Constructor with model
 ShiftAndPropagate::ShiftAndPropagate(CbcModel& model)
 	:CbcHeuristic(model)
 {
-
+	maxBacktrackLimit_ = -1;
 }
 
 // Copy constructor
 ShiftAndPropagate::ShiftAndPropagate(const ShiftAndPropagate& rhs)
 	:CbcHeuristic(rhs)
 {
-
+	maxBacktrackLimit_ = -1;
 }
 
 // Destructor
 ShiftAndPropagate::~ShiftAndPropagate()
 {
-
+	maxBacktrackLimit_ = -1;
 }
 
 // Clone
@@ -63,88 +64,55 @@ void
 ShiftAndPropagate::setModel(CbcModel* model)
 { }
 
-// transform integer variable
-void
-ShiftAndPropagate::transformIntVar(CoinPackedMatrix* matrixByRow, double* colUpper, double* colLower, double* rowUpper, double* rowLower, int iCol)
-{
-	double shiftValue;
-	bool negateCoeff;
-
-	if (fabs(colLower[iCol]) < fabs(colUpper[iCol]))
-	{
-		shiftValue = colLower[iCol];
-		negateCoeff = false;
-		if (colUpper[iCol] != COIN_DBL_MAX)
-			colUpper[iCol] -= colLower[iCol];
-	}
-	else
-	{
-		shiftValue = colUpper[iCol];
-		negateCoeff = true;
-		if (colLower[iCol] != -COIN_DBL_MAX)
-			colUpper[iCol] = -colLower[iCol] + colUpper[iCol];
-		else
-			colUpper[iCol] = COIN_DBL_MAX;
-
-	}
-	colLower[iCol] = 0;
-
-	int rowNum = matrixByRow->getNumRows();
-	for (int i = 0; i < rowNum; i++)
-	{
-		double aij = matrixByRow->getCoefficient(i, iCol);
-		if (aij == 0)
-			continue;
-		if (rowLower[i] != -COIN_DBL_MAX)
-			rowLower[i] -= aij * shiftValue;
-		if (rowUpper[i] != COIN_DBL_MAX)
-			rowUpper[i] -= aij * shiftValue;
-		if (negateCoeff)
-			matrixByRow->modifyCoefficient(i, iCol, -aij);
-	}
-}
 
 // relax continuous variable
 void
-ShiftAndPropagate::relaxContVar(CoinPackedMatrix* matrix, const double* colUpper, const double* colLower, double* rowUpper, double* rowLower, int iCol)
+ShiftAndPropagate::relaxContinuousVar(CoinPackedMatrix* matrixByCol, double colUpper, double colLower, double* rowUpper, double* rowLower, int iCol)
 {
-	int rowNum = matrix->getNumRows();
-	for (int i = 0; i < rowNum; i++)
+	const int* indicesByCol = matrixByCol->getIndices(); // 每列非0元素索引
+	const int* startsByCol = matrixByCol->getVectorStarts(); // 每列第一个非0元素为所有非0元素中的第几个
+	const int* lengthsByCol = matrixByCol->getVectorLengths(); // 每列非0元素个数
+	int elenum = matrixByCol->getNumElements();
+	int involvedRowNum = lengthsByCol[iCol]; // 包含该连续变量的行数
+	int start = startsByCol[iCol];
+	int i = 0;
+	while (i < involvedRowNum)
 	{
-		double aij = matrix->getCoefficient(i, iCol);
-		if (aij == 0)
-			continue;
-		else if (aij < 0)
+		int iRow = indicesByCol[start];
+		double aij = matrixByCol->getCoefficient(iRow, iCol);
+		if (aij < 0)
 		{
-			if (rowUpper[i] != COIN_DBL_MAX)
+			if (rowUpper[iRow] != COIN_DBL_MAX)
 			{
-				rowUpper[i] -= aij * colUpper[iCol];
-				if (isinf(rowUpper[i]))
-					rowUpper[i] = COIN_DBL_MAX;
+				rowUpper[iRow] -= aij * colUpper;
+				if (isinf(rowUpper[iRow]))
+					rowUpper[iRow] = COIN_DBL_MAX;
 			}
-			if (rowLower[i] != -COIN_DBL_MAX)
+			if (rowLower[iRow] != -COIN_DBL_MAX)
 			{
-				rowLower[i] -= aij * colLower[iCol];
-				if (isinf(rowLower[i]))
-					rowLower[i] = -COIN_DBL_MAX;
+				rowLower[iRow] -= aij * colLower;
+				if (isinf(rowLower[iRow]))
+					rowLower[iRow] = -COIN_DBL_MAX;
 			}
 		}
 		else
 		{
-			if (rowUpper[i] != COIN_DBL_MAX)
+			if (rowUpper[iRow] != COIN_DBL_MAX)
 			{
-				rowUpper[i] -= aij * colLower[iCol];
-				if (isinf(rowUpper[i]))
-					rowUpper[i] = COIN_DBL_MAX;
+				rowUpper[iRow] -= aij * colLower;
+				if (isinf(rowUpper[iRow]))
+					rowUpper[iRow] = COIN_DBL_MAX;
 			}
-			if (rowLower[i] != -COIN_DBL_MAX)
+			if (rowLower[iRow] != -COIN_DBL_MAX)
 			{
-				rowLower[i] -= aij * colUpper[iCol];
-				if (isinf(rowLower[i]))
-					rowLower[i] = -COIN_DBL_MAX;
+				rowLower[iRow] -= aij * colUpper;
+				if (isinf(rowLower[iRow]))
+					rowLower[iRow] = -COIN_DBL_MAX;
 			}
 		}
-		matrix->modifyCoefficient(i, iCol, 0);
+		matrixByCol->modifyCoefficient(iRow, iCol, 0, true);
+		start++;
+		i++;
 	}
 }
 
@@ -152,190 +120,185 @@ ShiftAndPropagate::relaxContVar(CoinPackedMatrix* matrix, const double* colUpper
 OsiSolverInterface*
 ShiftAndPropagate::transformProblem(CbcModel* model_)
 {
+	std::cout << "start transform problem method!" << std::endl;
+
 	int i, j;
-	int rowNum = model_->getNumRows();
-	int colNum = model_->getNumCols();
-	const CoinPackedMatrix* matrix = model_->getMatrixByRow();
-	const double* rowLower = model_->getRowLower();
-	const double* rowUpper = model_->getRowUpper();
-	double* transedRowLower = new double[rowNum]();
-	memcpy(transedRowLower, rowLower, sizeof(double) * rowNum);
-	double* transedRowUpper = new double[rowNum]();
-	memcpy(transedRowUpper, rowUpper, sizeof(double) * rowNum);
-	CoinPackedMatrix transedMatrix(*matrix);
+	int originalRowNum = model_->getNumRows();
+	int originalColNum = model_->getNumCols();
+	const CoinPackedMatrix* originalMatrixByRow = model_->getMatrixByRow();
+	const CoinPackedMatrix* originalMatrixByCol = model_->getMatrixByCol();
+	CoinPackedMatrix transedMatrixByCol(*originalMatrixByCol);
 
-	/*modify the lhs and rhs, i.e divide the lhs and rhs by the maximum absolute value of the row*/
-	for (i = 0; i < rowNum; i++)
+	const double* originalRowLower = model_->getRowLower();
+	const double* originalRowUpper = model_->getRowUpper();
+	double* transedRowLower = new double[originalRowNum];
+	memcpy(transedRowLower, originalRowLower, sizeof(double) * originalRowNum);
+	double* transedRowUpper = new double[originalRowNum];
+	memcpy(transedRowUpper, originalRowUpper, sizeof(double) * originalRowNum);
+
+	/*	矩阵系数标准化：
+		1. 矩阵所有系数变为1
+		2. 修改对应的行左、右端项
+	*/
+	for (i = 0; i < originalRowNum; i++)
 	{
-		CoinPackedVector ithVec = matrix->getVector(i); 
-
+		CoinPackedVector ithVec = originalMatrixByRow->getVector(i);
 		double maxCoeff = ithVec.infNorm();
+
 		if (transedRowLower[i] != -COIN_DBL_MAX)
 			transedRowLower[i] /= maxCoeff;
 		if (transedRowUpper[i] != COIN_DBL_MAX)
 			transedRowUpper[i] /= maxCoeff;
 
 		const int* indices = ithVec.getIndices();
-		const double* elements = ithVec.getElements();
+		const double* elements = ithVec.getElements();  // 只包含非0元素
 		int eleNum = ithVec.getNumElements();
 
 		for (j = 0; j < eleNum; j++)
 		{
 			double newElement = elements[j] / maxCoeff;
 			int iCol = indices[j];
-			transedMatrix.modifyCoefficient(i, iCol, newElement);
+			transedMatrixByCol.modifyCoefficient(i, iCol, newElement);
 		}
 	}
 
-	const double* colLower = model_->getColLower();
-	const double* colUpper = model_->getColUpper();
-	double* transedColLower = new double[colNum]();
-	memcpy(transedColLower, colLower, sizeof(double) * colNum);
-	double* transedColUpper = new double[colNum]();
-	memcpy(transedColUpper, colUpper, sizeof(double) * colNum);
-	for (j = 0; j < colNum; j++)
-	{
-		if (model_->isInteger(j))
-		{
-			if (colLower[j] == -COIN_DBL_MAX && colUpper[j] == COIN_DBL_MAX)  // ������������������
-				return NULL;
-			transformIntVar(&transedMatrix, transedColUpper, transedColLower, transedRowUpper, transedRowLower, j);
-		}
-		else
-		{
-			relaxContVar(&transedMatrix, transedColUpper, transedColLower, transedRowUpper, transedRowLower, j);
-		}
-	}
-
-	// const int* integerIndices = model_->integerVariable();
 	int integerNum = model_->numberIntegers();
-	int continuousNum = colNum - integerNum;
+	int continuousNum = originalColNum - integerNum;
+	const double* originalColLower = model_->getColLower();
+	const double* originalColUpper = model_->getColUpper();
 	const double* coefficients = model_->getObjCoefficients();
 	double* transedCoeffs = new double[integerNum];
 	int* continousIndices = new int[continuousNum];
-	double* finalColLower = new double[integerNum];
-	double* finalColUpper = new double[integerNum];
+	double* transedColLower = new double[integerNum];
+	double* transedColUpper = new double[integerNum];
 	int coeffCount = 0;
 	int continousCount = 0;
 	int colBoundCount = 0;
-	for (j = 0; j < colNum; j++)
+	/*	1. 松弛连续变量，因为整数变量均为0-1变量，所以不需要处理
+		2. 得到转换后目标函数系数、变量上下界（此处由于均为0-1，其实可以直接上界全设置为1，下界全设置为0）
+		3. 统计连续变量所在索引，最后需要在矩阵中将这些变量删除掉
+	*/
+	for (j = 0; j < originalColNum; j++)
 	{
 		if (model_->isInteger(j))
 		{
 			transedCoeffs[coeffCount++] = coefficients[j];
-			finalColLower[colBoundCount] = transedColLower[j];
-			finalColUpper[colBoundCount] = transedColUpper[j];
+			transedColLower[colBoundCount] = originalColLower[j];
+			transedColUpper[colBoundCount] = originalColUpper[j];
 			colBoundCount++;
 		}
 		else
+		{
+			relaxContinuousVar(&transedMatrixByCol, originalColUpper[j], originalColLower[j], transedRowUpper, transedRowLower, j);
 			continousIndices[continousCount++] = j;
+		}
 	}
-	transedMatrix.deleteCols(continousCount, continousIndices);
+	transedMatrixByCol.deleteCols(continousCount, continousIndices);
+	OsiSolverInterface* transedSolver = model_->solver()->clone();
+	transedSolver->loadProblem(transedMatrixByCol, transedColLower, transedColUpper, transedCoeffs, transedRowLower, transedRowUpper);
 
-	OsiSolverInterface* returnSolver = model_->solver()->clone();
-
-	returnSolver->loadProblem(transedMatrix, finalColLower, finalColUpper, transedCoeffs, transedRowLower, transedRowUpper);
-
-	for (int i = 0; i < returnSolver->getNumCols(); i++)
-		returnSolver->setInteger(i);
+	for (i = 0; i < transedSolver->getNumCols(); i++)
+		transedSolver->setInteger(i);
 	delete[] transedColLower;
 	delete[] transedColUpper;
 	delete[] transedRowLower;
 	delete[] transedRowUpper;
 	delete[] transedCoeffs;
 	delete[] continousIndices;
-	delete[] finalColLower;
-	delete[] finalColUpper;
 
-	return returnSolver;
+	return transedSolver;
 }
 
 /*compare function for variables' importance*/
 bool 
 ShiftAndPropagate::cmpForVarImportance(std::pair<int, double>a, std::pair<int, double>b)
 {
+	if (a.second == b.second)
+		return a.first < b.first;
 	return a.second > b.second;
 }
 
 int 
-ShiftAndPropagate::decideBestShift(OsiSolverInterface* transProblem, int colIndex)
+ShiftAndPropagate::bestShift(OsiSolverInterface* transedProblem, int iCol, double* currentRowLower, double* currentRowUpper)
 {
-	const CoinPackedMatrix* matrix = transProblem->getMatrixByRow();
-	const double* rowLower = transProblem->getRowLower();
-	const double* rowUpper = transProblem->getRowUpper();
-	const double* colLower = transProblem->getColLower();
-	const double* colUpper = transProblem->getColUpper();
-	int rowNumber = transProblem->getNumRows();
-	int t;
+	const CoinPackedMatrix* matrixByCol = transedProblem->getMatrixByCol();
+	double ithColUpper = transedProblem->getColUpper()[iCol];
+	double ithColLower = transedProblem->getColLower()[iCol];
+	const CoinPackedVector ithColVector = matrixByCol->getVector(iCol);
+	const double* ithColElements = ithColVector.getElements();
+	const int* ithColIndices = ithColVector.getIndices();
+	int ithColElementsNum = ithColVector.getNumElements();
 	std::set<std::pair<int, int>>Q;
-	for (int i = 0; i < rowNumber; i++)
+	for (int i = 0; i < ithColElementsNum; i++)
 	{
-		double aij = matrix->getCoefficient(i, colIndex);
-		if (aij == 0) continue;
-
-		if (rowUpper[i] != COIN_DBL_MAX)
+		int iRow = ithColIndices[i];
+		double rlb = currentRowLower[iRow];
+		double rub = currentRowUpper[iRow];
+		double aij = ithColElements[i];
+		if (rub != COIN_DBL_MAX)
 		{
-			if (rowUpper[i] < 0 && aij < 0)
+			if (rub < 0 && aij < 0)
 			{
-				t = std::ceil(rowUpper[i] / aij);
-				if (colLower[colIndex] <= t && t <= colUpper[colIndex])
+				int t = std::ceil(rub / aij);
+				if (ithColLower <= t && t <= ithColUpper)
 					Q.insert(std::pair<int, int>(t, -1));
 			}
-			else if (rowUpper[i] >= 0 && aij > 0)
+			if (rub >= 0 && aij > 0)
 			{
-				t = std::ceil(rowUpper[i] / aij + 1e-5);   // ����Ҫʹ��rowUpper[i]�ϸ�С��0���У�������rowUpper[i] / aij�պ�Ϊ��������ô��ʱ����1e-5�ͻ�ʹ��rowUpper[i]=0
-				if (colLower[colIndex] <= t && t <= colUpper[colIndex])
+				int t = std::ceil(rub / aij + 1e-5);   // 为了避免rub / aij 刚好为整数的情况
+				if (ithColLower <= t && t <= ithColUpper)
 					Q.insert(std::pair<int, int>(t, 1));
 			}
 		}
 
-		if (rowLower[i] != -COIN_DBL_MAX)
+		if (rlb != -COIN_DBL_MAX)
 		{
-			if (rowLower[i] > 0 && aij > 0)
+			if (rlb > 0 && aij > 0)
 			{
-				t = std::ceil(rowLower[i] / aij);
-				if (colLower[colIndex] <= t && t <= colUpper[colIndex])
+				int t = std::ceil(rlb / aij);
+				if (ithColLower <= t && t <= ithColUpper)
 					Q.insert(std::pair<int, int>(t, -1));
 			}
-			else if (rowLower[i] <= 0 && aij < 0)
+			if (rlb <= 0 && aij < 0)
 			{
-				t = std::ceil(rowLower[i] / aij + 1e-5);
-				if (colLower[colIndex] <= t && t <= colUpper[colIndex])
+				int t = std::ceil(rlb / aij + 1e-5);  // 为了避免rlb / aij刚好为整数情况
+				if (rlb <= t && t <= rlb)
 					Q.insert(std::pair<int, int>(t, 1));
 			}
 		}
 	}
 
-	if (Q.empty())
-		return 0;
+	if (Q.empty())  // 这个地方文章中说明这样更改
+		return std::floor(ithColUpper);
 
-	bool exsitZero = false;
-	bool exsitOne = false;
+	int sigma = 0;
+	int bestVal = 0;
+	int tBefore = 0;
+	int minRowViolationSum = 0;
 	for (auto it = Q.begin(); it != Q.end(); it++)
 	{
-		if ((*it).first == 0)
-			exsitZero = true;
+		if ((*it).first == tBefore)
+			sigma += (*it).second;
 		else
-			exsitOne = true;
+		{
+			if (sigma < minRowViolationSum)
+			{
+				minRowViolationSum = sigma;
+				bestVal = tBefore;
+			}
+			tBefore = (*it).first;
+			sigma = 0;
+			sigma += (*it).second;
+		}
+		auto iter = Q.end(); // 判断是否为最后一个元素
+		iter--;
+		if (it == iter && sigma < minRowViolationSum)
+		{
+			minRowViolationSum = sigma;
+			bestVal = tBefore;
+		}
 	}
-	if (!exsitOne)
-		return 0;
-	if (!exsitZero)
-		return 1;
-
-	int numberOne = 0;
-	int numberZero = 0;
-	for (auto it = Q.begin(); it != Q.end(); it++)
-	{
-		if ((*it).first == 0)
-			numberZero += (*it).second;
-		else
-			numberOne += (*it).second;
-	}
-	if (numberZero <= numberZero)
-		return 1;
-	else
-		return 0;
+	return bestVal;
 }
 
 // MAIN PROCEDURE 
@@ -365,97 +328,119 @@ ShiftAndPropagate::solution(double& solutionValue, double* betterSolution)
 	const int* originalIntegerIndices = model_->integerVariable();
 
 	// transform problem
-	OsiSolverInterface* transedProblem = transformProblem(model_);
+	OsiSolverInterface* transedProblem0 = transformProblem(model_);
+	OsiClpSolverInterface* transedProblem = dynamic_cast<OsiClpSolverInterface*>(transedProblem0);
 
-	const CoinPackedMatrix* transedMatrixByCol = transedProblem->getMatrixByCol(); 
-	int originalColNumber = model_->getNumCols();
-	int transedRowNumber = transedMatrixByCol->getNumRows();
-	int transedColNumber = transedMatrixByCol->getNumCols();
-
-	const double* transedColLower = transedProblem->getColLower();
-	const double* transedColUpper = transedProblem->getColUpper();
-	const double* transedRowLower = transedProblem->getRowLower();
-	const double* transedRowUpper = transedProblem->getRowUpper();
-
+	// Order of variable importance
+	int transedRowNum = transedProblem->getNumRows();
+	int transedColNum = transedProblem->getNumCols();
+	const CoinPackedMatrix* transedMatrixByCol = transedProblem->getMatrixByCol();
 	std::vector<std::pair<int, double>>varImportance;
-	for (int j = 0; j < integerNumber; j++)
+	for (int j = 0; j < transedColNum; j++)
 	{
 		CoinPackedVector ithColVector = transedMatrixByCol->getVector(j);
-		int nonZeroCoefNum = 0;
+		double* ithColElements = ithColVector.getElements();
+		int ithColElementsNum = ithColVector.getNumElements();
+
+		int nonZeroCoefNum = ithColElementsNum;
 		double absCoefSum = 0.0;
-		for (int i = 0; i < transedRowNumber; i++)
-		{
-			if (ithColVector[i] != 0)
-			{
-				nonZeroCoefNum++;
-				absCoefSum += std::fabs(ithColVector[i]);
-			}
-		}
+		for (int i = 0; i < ithColElementsNum; i++)
+			absCoefSum += std::fabs(ithColElements[i]);
 		double importance = nonZeroCoefNum + absCoefSum;
 		varImportance.push_back(std::pair<int, double>(j, importance));
 	}
-	//std::sort(varImportance.begin(), varImportance.end(), cmpForVarImportance);
+	std::sort(varImportance.begin(), varImportance.end(), cmpForVarImportance);
 
-	/*start shift and propagate*/
-	double* constant = new double[transedRowNumber]();    // ������ÿ�̶�һ������֮�󣬼������ÿһ���������ĵĳ���ֵ
-	double* bestshiftForEveryVar = new double[transedColNumber]();  // ���ڼ�¼ÿ��������bestshiftֵ
+	/***********main loop *************/
+	double* bestShiftForCols = new double[transedColNum](); // 用于存储每个整数变量的best shift，对于循环中没有确定的，皆取best shift为下界即可
+	// double* constant = new double[transedRowNum](); // 用于记录每次固定变量后所产生的常量值，用于判断zero-solution的可行性。  
 	bool isSatisfy = true;
-	OsiSolverInterface* solver = model_->solver()->clone();
+	int backtrackNum = 0;   // 记录回溯的次数
+	const double* transedRowLower = transedProblem->getRowLower();
+	const double* transedRowUpper = transedProblem->getRowUpper();
+	double* currentRowLower = new double[transedRowNum];   // 用于存储实时行上下界，因为在某一变量固定后，计算新的上下界用于判断0解的可行性
+	double* currentRowUpper = new double[transedRowNum];
+	std::memcpy(currentRowLower, transedRowLower, sizeof(double) * transedRowNum);
+	std::memcpy(currentRowUpper, transedRowUpper, sizeof(double) * transedRowNum);
+
 	for (auto it = varImportance.begin(); it != varImportance.end(); it++)
 	{
+		if (backtrackNum > maxBacktrackLimit_)
+			break;
 		int iCol = (*it).first;
-		if (transedColLower[iCol] == transedColUpper[iCol])  // �����ȣ��϶���Ϊ0����Ϊ����ת���Ѿ����½��Ϊ0�����Բ���Ҫ����constant��ֵ
+		bool isLastEqual = false;  // 表示是否为最后一列，且上下界已经相等
+		// 获取当前列上下界，因为propagate可能会改变列的上下界
+		const double* currentColLower = transedProblem->getColLower();
+		const double* currentColUpper = transedProblem->getColUpper();
+		if (currentColLower[iCol] == currentColUpper[iCol])
 		{
-			solver->setColLower(iCol, transedColLower[iCol]);
-			solver->setColUpper(iCol, transedColLower[iCol]);
-			continue;
+			bestShiftForCols[iCol] = currentColLower[iCol];
+			CoinPackedVector ithColVector = transedMatrixByCol->getVector(iCol);
+			double* ithColElements = ithColVector.getElements();
+			int* ithColIndices = ithColVector.getIndices();
+			int ithElementsNum = ithColVector.getNumElements();
+			for (int i = 0; i < ithElementsNum; i++)
+			{
+				int iRow = ithColIndices[i];
+				double element = ithColElements[i];
+				double constant = element * currentColLower[iCol];
+				if (currentRowLower[iRow] != -COIN_DBL_MAX)
+					currentRowLower[iRow] -= constant;
+				if (currentRowUpper[iRow] != COIN_DBL_MAX)
+					currentRowUpper[iRow] -= constant;
+			}
+
+			auto iter = varImportance.end();
+			iter--;
+			if (it != iter)
+				continue;
+			isLastEqual = true;
 		}
-		for (int i = 0; i < transedRowNumber; i++)  // �ж�0���Ƿ�����
+		// 判断0解是否满足
+		for (int i = 0; i < transedRowNum; i++)
 		{
-			if (!(transedRowLower[i] - constant[i] <= 0 && transedRowUpper[i] - constant[i] >= 0))
+			if (currentRowLower[i] > 0 || currentRowUpper[i] < 0)  // 如果存在某行下界大于0或者某行上界小于0，不满足
 			{
 				isSatisfy = false;
 				break;
 			}
 			isSatisfy = true;
 		}
-		if (isSatisfy) break;  // 0�����㣬��ֹͣ
+		if (isSatisfy || isLastEqual)
+			break;
 
-		int bestshift = decideBestShift(transedProblem, iCol);
+		int bestVal = bestShift(transedProblem, iCol, currentRowLower, currentRowUpper);
 
-		const double* currentColLower = transedProblem->getColLower();
-		const double* currentColUpper = transedProblem->getColUpper();
-		double* backtrackColLower = new double[transedColNumber]();
-		double* backtrackColUpper = new double[transedColNumber]();
-		memcpy(backtrackColLower, currentColLower, sizeof(double) * transedColNumber);
-		memcpy(backtrackColUpper, currentColUpper, sizeof(double) * transedColNumber);
+		double* backtrackColLower = new double[transedColNum];
+		double* backtrackColUpper = new double[transedColNum];
+		memcpy(backtrackColLower, currentColLower, sizeof(double) * transedColNum);
+		memcpy(backtrackColUpper, currentColUpper, sizeof(double) * transedColNum);
 
-		transedProblem->setColLower(iCol, bestshift);
-		transedProblem->setColUpper(iCol, bestshift);
-		CglPreProcess process;
-		int infeasibility = process.tightenPrimalBounds(*transedProblem);
-		if (infeasibility)
+		transedProblem->setColLower(iCol, bestVal);
+		transedProblem->setColUpper(iCol, bestVal);
+		int tightenNum = transedProblem->tightenBounds();
+		if (tightenNum == -1)
 		{
 			transedProblem->setColLower(backtrackColLower);
 			transedProblem->setColUpper(backtrackColUpper);
-			//showMatrix(transedProblem);
+			backtrackNum++;
 		}
 		else
 		{
-			transedProblem->setColLower(backtrackColLower);
-			transedProblem->setColUpper(backtrackColUpper);
-			transedProblem->setColLower(iCol, bestshift);
-			transedProblem->setColUpper(iCol, bestshift);
-			bestshiftForEveryVar[iCol] = bestshift;
-			//showMatrix(transedProblem);
-
-			if (bestshift != 0)
+			bestShiftForCols[iCol] = bestVal;
+			CoinPackedVector ithColVector = transedMatrixByCol->getVector(iCol);
+			double* ithColElements = ithColVector.getElements();
+			int* ithColIndices = ithColVector.getIndices();
+			int ithElementsNum = ithColVector.getNumElements();
+			for (int i = 0; i < ithElementsNum; i++)
 			{
-				for (int i = 0; i < transedRowNumber; i++)
-				{
-					double temp = (transedMatrixByCol->getCoefficient(i, iCol) * bestshift);
-					constant[i] += temp;
-				}
+				int iRow = ithColIndices[i];
+				double element = ithColElements[i];
+				double constant = element * bestVal;
+				if (currentRowLower[iRow] != -COIN_DBL_MAX)
+					currentRowLower[iRow] -= constant;
+				if (currentRowUpper[iRow] != COIN_DBL_MAX)
+					currentRowUpper[iRow] -= constant;
 			}
 		}
 		delete[] backtrackColLower;
@@ -464,31 +449,19 @@ ShiftAndPropagate::solution(double& solutionValue, double* betterSolution)
 	int returnCode = isSatisfy;
 	if (isSatisfy)
 	{
-		// ת���ض�Ӧ��ԭ�����е�ֵ
-		for (int j = 0; j < integerNumber; j++)
+		const int* integerIndices = model_->integerVariable();
+		OsiSolverInterface* solver = model_->solver()->clone();
+		for (int j = 0; j < transedColNum; j++)
 		{
-			int iCol = originalIntegerIndices[j];
-			if (std::fabs(originalColLower[iCol]) <= std::fabs(originalColUpper[iCol]))
-			{
-				double originalValue = bestshiftForEveryVar[j] + originalColLower[iCol];
-				solver->setColLower(iCol, originalValue);
-				solver->setColUpper(iCol, originalValue);
-			}
-			else
-			{
-				double originalValue = originalColUpper[iCol] - bestshiftForEveryVar[j];
-				solver->setColLower(iCol, originalValue);
-				solver->setColUpper(iCol, originalValue);
-			}
+			int iCol = integerIndices[j];
+			solver->setColLower(iCol, bestShiftForCols[j]);
+			solver->setColUpper(iCol, bestShiftForCols[j]);
 		}
-		//showMatrix(&solver);
-
 		solver->initialSolve();
-		returnCode = solver->isProvenOptimal();
 		if (solver->isProvenOptimal())
 		{
 			const double* solverSol = solver->getColSolution();
-			memcpy(betterSolution, solverSol, sizeof(double)* columnNumber);
+			memcpy(betterSolution, solverSol, sizeof(double) * columnNumber);
 			double solverObjVal = solver->getObjValue();
 			solutionValue = solverObjVal;
 		}
