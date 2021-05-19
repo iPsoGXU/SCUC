@@ -32,17 +32,14 @@ public:
     /// update model (This is needed if cliques update matrix etc)
     virtual void setModel(CbcModel* model);
 
-    /// transform integer variable
-    void transformIntVar(CoinPackedMatrix* matrixByRow, double* colUpper, double* colLower, double* rowUpper, double* rowLower, int iCol);
-
     /// relax continuous variable
-    void relaxContVar(CoinPackedMatrix* matrix, const double* colUpper, const double* colLower, double* rowUpper, double* rowLower, int iCol);
+    void relaxContinuousVar(CoinPackedMatrix* matrixByCol, double colUpper, double colLower, double* rowUpper, double* rowLower, int iCol);
 
     /// do problem transformation
    virtual OsiSolverInterface* transformProblem(CbcModel* model_);
 
    /// decide best shift
-   int decideBestShift(OsiSolverInterface* transProblem, int colIndex);
+   int bestShift(OsiSolverInterface* transedProblem, int iCol, double* currentRowLower, double* currentRowUpper);
 
    /*compare function for variables' importance*/
    bool cmpForVarImportance(std::pair<int, double>a, std::pair<int, double>b);
@@ -56,22 +53,20 @@ public:
         double* newSolution);
 
     /// Sets how often to do it
-    inline void setHowOften(int value)
+    inline void setMaxBacktrack(int value)
     {
-        howOften_ = value;
+        maxBacktrackLimit_ = value;
     }
     /// Gets how often to do it
     inline int getHowOften()
     {
-        return howOften_;
+        return maxBacktrackLimit_;
     }
 
 
 protected:
-    // Data
+    /// max backtrack limit
+    int maxBacktrackLimit_;
 
-    
 };
 #endif
-
-
